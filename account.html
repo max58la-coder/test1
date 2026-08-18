@@ -1,1 +1,70 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>حسابي - النقاط | خدماتك.شوب</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">خدماتك<span><i class="fa-solid fa-shop"></i></span></a>
+            <nav class="nav-links">
+                <a href="index.html">الرئيسية</a>
+                <a href="account.html">حسابي</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container section">
+        <h2 class="section-title"><i class="fa-solid fa-gifts"></i>نظام نقاط المكافآت</h2>
+
+        <div class="card card-center">
+            <p style="margin-bottom: 15px;">أدخل رقم الواتساب لعرض رصيدك من النقاط</p>
+            <div class="form-group">
+                <input type="tel" id="checkPhone" placeholder="09xxxxxxxx">
+                <button onclick="checkAccount()" class="btn-primary">عرض الرصيد <i class="fa-solid fa-coins"></i></button>
+            </div>
+
+            <!-- بطاقة النتيجة -->
+            <div id="accountBox" style="display: none; margin-top: 25px; text-align: center;">
+                <h3>مرحباً، <span id="accName" style="color:var(--primary);"></span> <i class="fa-solid fa-square-check"></i></h3>
+                
+                <div style="background: linear-gradient(135deg, var(--primary), #1d4ed8); color: white; padding: 20px; border-radius: var(--radius); margin: 20px 0;">
+                    <div style="font-size: 2.5rem; font-weight: 800;" id="accPoints">0</div>
+                    <div>نقطة مجانية</div>
+                </div>
+
+                <div style="text-align: right; line-height: 2;">
+                    <p><b>قيمة النقاط الحالية:</b> <span id="accValue" style="color: green; font-weight: bold;">0 ج.س</span></p>
+                    <p><b>إجمالي مشترياتك:</b> <span id="accSpent">0 ج.س</span></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        function checkAccount() {
+            let phone = document.getElementById('checkPhone').value.trim();
+            let user = DB.points[phone];
+
+            if(user) {
+                document.getElementById('accName').innerText = user.name;
+                document.getElementById('accPoints').innerText = user.points;
+                document.getElementById('accValue').innerText = (user.points * DB.pointValue).toLocaleString('ar-SA') + " ج.س";
+                document.getElementById('accSpent').innerText = user.totalSpent.toLocaleString('ar-SA') + " ج.س";
+                document.getElementById('accountBox').style.display = 'block';
+            } else {
+                alert('الرقم غير مسجل. يرجى طلب أول خدمة ليتم تسجيل نقاطك تلقائياً!');
+                document.getElementById('accountBox').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
 
