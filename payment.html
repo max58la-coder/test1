@@ -1,1 +1,143 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>إتمام الدفع | خدماتك.شوب</title>
+    <link rel="stylesheet" href="style.css">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+<body>
+
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="index.html" class="logo">خدماتك<span><i class="fa-solid fa-shop"></i></span></a>
+        </div>
+    </header>
+
+    <main class="container section">
+        <h2 class="section-title">  <i class="fa-regular fa-credit-card"></i>تفاصيل الدفع والطلب</h2>
+
+        <div class="card card-center" style="text-align: right; max-width: 600px;">
+            <!-- ملخص الفاتورة -->
+            <div style="background: var(--light-bg); padding: 15px; border-radius: var(--radius); margin-bottom: 20px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                    <span>الخدمة:</span>
+                    <strong id="payService">جاري التحميل...</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-bottom: 8px;">
+                    <span>السعر الأساسي:</span>
+                    <strong id="payPrice" style="color: var(--primary);">0 ج.س</strong>
+                </div>
+                <hr style="margin: 10px 0; border: 0; border-top: 1px dashed #ccc;">
+                <div style="display:flex; justify-content:space-between; color: green; font-weight: bold;">
+                    <span>الخصم المطبق:</span>
+                    <span id="discountText">0 ج.س</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; font-size: 1.2rem; font-weight: 800; margin-top: 10px;">
+                    <span>الإجمالي النهائي:</span>
+                    <span id="finalPrice">0 ج.س</span>
+                </div>
+            </div>
+
+            <!-- معلومات الدفع -->
+            <div style="background: #eff6ff; border: 1px dashed var(--primary); padding: 15px; border-radius: var(--radius); margin-bottom: 20px;">
+                <p><b>اسم الحساب:</b> Abozar Mohamed Mosa Ajap</p>
+                <p><b>(رقم حساب ماي كاش):</b> 402543305</p>
+                <p style="color: #dc2626; font-size: 0.85rem; margin-top: 5px;">⚠️ أرفق صورة الاشعار في الواتساب.</p>
+            </div>
+
+            <!-- نموذج البيانات -->
+            <form id="payForm">
+                <label>رقم الواتساب:</label>
+                <input type="tel" id="userPhone" placeholder="09xxxxxxxx" required style="width:100%; margin-bottom:12px;">
+
+                <div id="pointsOption" style="display:none; margin-bottom: 15px; background: #f0fdf4; padding: 10px; border-radius: 8px;">
+                    <input type="checkbox" id="usePointsCheckbox">
+                    <label for="usePointsCheckbox">استخدام نقاطي للخصم (عندك <span id="userPointsNum">0</span> نقطة)</label>
+                </div>
+
+                <label>تفاصيل الخدمة (رابط الحساب / الملاحظات):</label>
+                <textarea id="userDetails" placeholder="مثال: رابط حساب الإنستغرام..." required style="width:100%; height:80px; padding:10px; border-radius:var(--radius); border:2px solid #e2e8f0; outline:none; margin-bottom:12px;"></textarea>
+
+                <label>رقم العملية من بنكك (اختياري):</label>
+                <input type="text" id="transId" placeholder="مثال: TRX98765" style="width:100%; margin-bottom:15px;">
+
+                <button type="submit" class="btn-primary" style="width: 100%;">إرسال الطلب عبر الواتساب <i class="fa-regular fa-paper-plane"></i> </button>
+            </form>
+        </div>
+    </main>
+
+    <script src="app.js"></script>
+    <script>
+        // قراءة اسم الخدمة والسعر من رابط الصفحة
+        const urlParams = new URLSearchParams(window.location.search);
+        const serviceName = urlParams.get('service') || "خدمة عامة";
+        let basePrice = parseInt(urlParams.get('price')) || 0;
+
+        document.getElementById('payService').innerText = serviceName;
+        document.getElementById('payPrice').innerText = basePrice.toLocaleString('ar-SA') + " ج.س";
+        document.getElementById('finalPrice').innerText = basePrice.toLocaleString('ar-SA') + " ج.س";
+
+        let currentDiscount = 0;
+
+        // التحقق من النقاط عند إدخال الهاتف
+        document.getElementById('userPhone').addEventListener('input', function() {
+            let phone = this.value.trim();
+            let customer = DB.points[phone];
+
+            if(customer && customer.points > 0) {
+                document.getElementById('pointsOption').style.display = 'block';
+                document.getElementById('userPointsNum').innerText = customer.points;
+                
+                // حساب الخصم
+                let possibleDiscount = customer.points * DB.pointValue;
+                currentDiscount = possibleDiscount > basePrice ? basePrice : possibleDiscount;
+            } else {
+                document.getElementById('pointsOption').style.display = 'none';
+                currentDiscount = 0;
+                document.getElementById('usePointsCheckbox').checked = false;
+                updateTotals(0);
+            }
+        });
+
+        // عند تحديد خيار الخصم
+        document.getElementById('usePointsCheckbox').addEventListener('change', function() {
+            if(this.checked) {
+                updateTotals(currentDiscount);
+            } else {
+                updateTotals(0);
+            }
+        });
+
+        function updateTotals(discount) {
+            let final = basePrice - discount;
+            document.getElementById('discountText').innerText = discount.toLocaleString('ar-SA') + " ج.س";
+            document.getElementById('finalPrice').innerText = final.toLocaleString('ar-SA') + " ج.س";
+        }
+
+        // إرسال الطلب عبر الواتساب
+        document.getElementById('payForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            let phone = document.getElementById('userPhone').value.trim();
+            let details = document.getElementById('userDetails').value.trim();
+            let transId = document.getElementById('transId').value.trim() || "غير مدخل";
+            let usedDiscount = document.getElementById('usePointsCheckbox').checked ? currentDiscount : 0;
+            let finalTotal = basePrice - usedDiscount;
+
+            let msg = `🚀 *طلب جديد من الموقع*%0A%0A` +
+                      `*الخدمة:* ${serviceName}%0A` +
+                      `*السعر:* ${basePrice.toLocaleString('ar-SA')} ج.س%0A` +
+                      `*الخصم:* ${usedDiscount.toLocaleString('ar-SA')} ج.س%0A` +
+                      `*الإجمالي:* ${finalTotal.toLocaleString('ar-SA')} ج.س%0A` +
+                      `*رقم الزبون:* ${phone}%0A` +
+                      `*التفاصيل:* ${details}%0A` +
+                      `*رقم التحويل:* ${transId}`;
+
+            window.open(`https://wa.me/${DB.adminPhone}?text=${msg}`, '_blank');
+        });
+    </script>
+</body>
+</html>
