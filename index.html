@@ -1,1 +1,63 @@
 
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>خدماتك.شوب | متجر الخدمات الرقمية</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- مكتبة Remix Icon CDN -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.3.0/css/all.min.css" integrity="sha512-ApSLB1Pd3/bZN8fWB/RG9YhN/7bd9Hkf3AGaE2mPfebjrxagjuBtx2GcgdqIlJkUzwylBo61r9Xa9NmgBI0swA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+</head>
+<body>
+
+    <!-- الهيدر وشريط التنقل -->
+    <header class="main-header">
+        <div class="container header-content">
+            <a href="#" class="logo">خدماتك<span><i class="fa-solid fa-shop"></i></span></a>
+            <nav class="nav-links">
+                <a href="#services">الخدمات</a>
+                <a href="#track">تتبع طلبك</a>
+                <a href="#account">حسابي</a>
+            </nav>
+            <a href="#join" class="btn-secondary">انضم كفرد في الفريق</a>
+        </div>
+    </header>
+
+    <!-- واجهة الصفحة الرئيسية (Hero) -->
+    <section class="hero">
+        <div class="container hero-content">
+            <h1>أنجز خدماتك الرقمية بسرعة وسهولة</h1> 
+            <p>منصة شاملة لتزويد المتابعين، تصميم المواقع، المونتاج، والخدمات الإبداعية.</p>
+            <a href="#services" class="btn-primary">تصفح الخدمات الآن</a>
+        </div>
+    </section>
+
+    <!-- قسم شبكة الخدمات -->
+    <section id="services" class="container section">
+        <h2 class="section-title"> <i class="fa-solid fa-boxes-stacked"></i> الخدمات المتاحة</h2>
+        <div class="services-grid" id="servicesGrid">
+            <!-- كروت الخدمات ستظهر هنا عن طريق JavaScript -->
+        </div>
+    </section>
+
+    <!-- قسم تتبع الطلبات -->
+    <section id="track" class="container section">
+        <div class="card card-center">
+            <h2><i class="fa-regular fa-truck"></i> تتبع حالة طلبك</h2>
+            <p>أدخل رقم الهاتف أو رقم العملية لتفاصيل الطلب</p>
+            <div class="form-group">
+                <input type="text" id="trackInput" placeholder="مثال: 0912345678">
+                <button onclick="trackOrder()" class="btn-primary">تتبع</button>
+            </div>
+            <div id="trackResult" class="result-box" style="display: none;"></div>
+        </div>
+    </section>
+
+    <!-- الزر الطافي للواتساب -->
+    <a href="https://wa.me/249963534622" class="whatsapp-float" target="_blank"><i class="fa-brands fa-rocketchat"></i></a>
+
+    <script src="app.js"></script>
+</body>
+</html>
